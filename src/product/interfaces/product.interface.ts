@@ -1,6 +1,7 @@
-export interface CreateProductDto {
+export interface Product {
   created_at: number;
   description: Array<string>;
+  id: string;
   image: string;
   link: string;
   price: number;
