@@ -14,15 +14,30 @@ datasource db {
 }
 
 model Product {
-  created_at      Int
-  description     String[]
-  id              String @id @default(uuid())
-  image           String
-  link            String
-  price           Int
-  product_group   String
-  purchase_count  Int
-  tag             String
-  title           String
-  type            String
+  created_at     Int
+  description    String[] @default([])
+  id             String   @id
+  media          String[] @default([])
+  link           String
+  price          Float
+  product_group  String
+  purchase_count Int
+  rating         Int      @default(0)
+  tag            String
+  title          String
+  category       String   @default("")
+  Review         Review[]
+}
+
+model Review {
+  created_at Int
+  from       String
+  id         String   @id
+  media      String[] @default([])
+  product    Product? @relation(fields: [product_id], references: [id])
+  product_id String
+  rating     Int
+  text       String
+  title      String
+  user       String
 }
