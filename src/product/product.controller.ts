@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { Product } from '../interfaces/product.interface';
 import { SortByTypes } from 'src/types/product_sort_by';
@@ -20,12 +20,14 @@ export class ProductController {
     return this.productService.createProduct(products);
   }
 
-  @Get()
+  @Get('/:category')
   async getFilteredProducts(
+    @Param('category') category: ProductCategoriesTypes,
     @Query('page') page: number = 1,
-    @Query('category') category?: ProductCategoriesTypes,
-    @Query('sort_by') sort_by: SortByTypes = 'BEST_SELLING',
+    @Query('sort_by')
+    sort_by: SortByTypes = 'BEST_SELLING',
   ): Promise<Product[]> {
+    console.log(category);
     const products = await this.productService.getFilteredProducts({
       page,
       category,
