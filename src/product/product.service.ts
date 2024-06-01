@@ -44,12 +44,9 @@ export class ProductService {
     const { field, order } = getSortByQueryConstraint(params.sort_by);
 
     let products: Product[];
-    if (params.category) {
-      // In case there is a category, for example /product?category=games
+    if (params.category == 'all') {
+      // In case there is no category to filter by
       products = await this.prisma.product.findMany({
-        where: {
-          category: params.category.toUpperCase(),
-        },
         orderBy: {
           [field]: order,
         },
@@ -57,8 +54,11 @@ export class ProductService {
         skip: Number(skip),
       });
     } else {
-      // In case there is no category to filter by
+      // In case there is a category, for example /product/games
       products = await this.prisma.product.findMany({
+        where: {
+          category: params.category.toUpperCase(),
+        },
         orderBy: {
           [field]: order,
         },

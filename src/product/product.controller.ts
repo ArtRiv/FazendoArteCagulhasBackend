@@ -20,14 +20,19 @@ export class ProductController {
     return this.productService.createProduct(products);
   }
 
+  @Get()
+  async getProductById(@Query('id') id: string): Promise<Product> {
+    const product = await this.productService.getProductById(id);
+
+    return product;
+  }
+
   @Get('/:category')
   async getFilteredProducts(
     @Param('category') category: ProductCategoriesTypes,
     @Query('page') page: number = 1,
-    @Query('sort_by')
-    sort_by: SortByTypes = 'BEST_SELLING',
+    @Query('sort_by') sort_by: SortByTypes = 'BEST_SELLING',
   ): Promise<Product[]> {
-    console.log(category);
     const products = await this.productService.getFilteredProducts({
       page,
       category,
