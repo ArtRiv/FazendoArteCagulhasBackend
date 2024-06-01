@@ -4,6 +4,7 @@ import { PrismaService } from 'nestjs-prisma';
 import { Review } from '../interfaces/review.interface';
 import { ProductQueryParams } from 'src/interfaces/query_params.interface';
 import { getSortByQueryConstraint } from 'src/utils/getSortByConstraint';
+import { getAvarageRating } from 'src/utils/addAvarageRating';
 
 @Injectable()
 export class ProductService {
@@ -83,21 +84,42 @@ export class ProductService {
       const productReviews = reviews.filter(
         (review) => review.product_id === product.id,
       );
-      const totalRating = productReviews.length;
-      const sumRatings = productReviews.reduce(
-        (sum, review) => sum + review.rating,
-        0,
-      );
-      const avarageRating = totalRating > 0 ? sumRatings / totalRating : 0;
-      const roundedRating = Math.round(avarageRating * 2) / 2; // Rounds to nearest 0.5
+
+      const rating = getAvarageRating(productReviews);
 
       return {
         ...product,
-        rating: roundedRating,
+        rating,
       };
     });
 
     return productsWithAvarageRating;
+  }
+
+  async getProductById(id: string): Promise<Product> {
+    const product = await this.prisma.product.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    const productReviews: Partial<Review>[] = await this.prisma.review.findMany(
+      {
+        where: {
+          product_id: id,
+        },
+        select: {
+          rating: true,
+        },
+      },
+    );
+
+    const rating = getAvarageRating(productReviews);
+
+    return {
+      ...product,
+      rating,
+    };
   }
 
   // async deleteProduct(id: string): Promise<Product> {
