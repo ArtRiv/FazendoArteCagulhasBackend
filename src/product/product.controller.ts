@@ -31,7 +31,7 @@ export class ProductController {
   async getFilteredProducts(
     @Param('category') category: ProductCategoriesTypes,
     @Query('page') page: number = 1,
-    @Query('sort_by') sort_by: SortByTypes = 'BEST_SELLING',
+    @Query('sort_by') sort_by: SortByTypes = 'BEST_SELLING' as SortByTypes,
   ): Promise<Product[]> {
     const products = await this.productService.getFilteredProducts({
       page,
