@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { Product } from '../interfaces/product.interface';
 import { PrismaService } from 'nestjs-prisma';
 import { Review } from '../interfaces/review.interface';
-import { ProductQueryParams } from 'src/interfaces/query_params.interface';
+import { FilteredProductQueryParams } from 'src/interfaces/query_params.interface';
 import { getSortByQueryConstraint } from 'src/utils/getSortByConstraint';
 import { getAvarageRating } from 'src/utils/addAvarageRating';
+import { getPagination } from 'src/utils/getPagination';
 
 @Injectable()
 export class ProductService {
@@ -34,17 +35,14 @@ export class ProductService {
     }
   }
 
-  async getFilteredProducts(params: ProductQueryParams): Promise<Product[]> {
-    // Pagination logic
-    const DEFAULT_TAKE = 16;
-    const take = DEFAULT_TAKE;
-    const skip = (params.page - 1) * DEFAULT_TAKE;
-
-    // Sort by constraint
+  async getFilteredProducts(
+    params: FilteredProductQueryParams,
+  ): Promise<Product[]> {
+    const { skip, take } = getPagination(params.page);
     const { field, order } = getSortByQueryConstraint(params.sort_by);
 
     let products: Product[];
-    if (params.category == 'all') {
+    if (params.category == 'ALL') {
       // In case there is no category to filter by
       products = await this.prisma.product.findMany({
         orderBy: {
