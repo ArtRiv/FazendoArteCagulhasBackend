@@ -15,19 +15,20 @@ datasource db {
 }
 
 model Product {
+  category       Category @relation(fields: [category_id], references: [id])
+  category_id    Int
   created_at     Int
   description    String[] @default([])
   id             String   @id
-  media          String[] @default([])
   link           String
+  media          String[] @default([])
   price          Float
   product_group  String
   purchase_count Int
   rating         Int      @default(0)
+  review         Review[]
   tag            String
   title          String
-  category       String   @default("")
-  Review         Review[]
 }
 
 model Review {
@@ -41,4 +42,10 @@ model Review {
   text       String
   title      String
   user       String
+}
+
+model Category {
+  id Int @id @default(autoincrement())
+  name String
+  products Product[]
 }
