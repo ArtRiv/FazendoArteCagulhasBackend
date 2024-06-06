@@ -11,6 +11,23 @@ import { getPagination } from 'src/utils/getPagination';
 export class CollectionService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async createProducts(product: Product[]): Promise<Product[]> {
+    try {
+      await this.prisma.$transaction(async (prisma) => {
+        await prisma.product.createMany({
+          data: product,
+        });
+      });
+      return product;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async getAllProducts() {
+    return this.prisma.product.findMany();
+  }
+
   async getFilteredProducts(
     params: FilteredProductQueryParams,
   ): Promise<Product[]> {
@@ -18,27 +35,25 @@ export class CollectionService {
     const { field, order } = getSortByQueryConstraint(params.sort_by);
 
     let products: Product[];
-    if (params.category == 'ALL') {
+
+    const query = {
+      orderBy: {
+        [field]: order,
+      },
+      take: Number(take),
+      skip: Number(skip),
+      where: {},
+    };
+
+    if (params.category_id == 1) {
       // In case there is no category to filter by
-      products = await this.prisma.product.findMany({
-        orderBy: {
-          [field]: order,
-        },
-        take: Number(take),
-        skip: Number(skip),
-      });
+      products = await this.prisma.product.findMany(query);
     } else {
-      // In case there is a category, for example /product/games
-      products = await this.prisma.product.findMany({
-        where: {
-          category: params.category.toUpperCase(),
-        },
-        orderBy: {
-          [field]: order,
-        },
-        take: Number(take),
-        skip: Number(skip),
-      });
+      // In case there is a category, for example id = 4 (games)
+      query.where = {
+        category_id: Number(params.category_id),
+      };
+      products = await this.prisma.product.findMany(query);
     }
 
     const productsIDs = products.map((product) => product.id);
@@ -68,5 +83,9 @@ export class CollectionService {
     });
 
     return productsWithAvarageRating;
+  }
+
+  async deleteProducts() {
+    await this.prisma.product.deleteMany();
   }
 }

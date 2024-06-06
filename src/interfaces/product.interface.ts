@@ -10,5 +10,5 @@ export interface Product {
   rating: number;
   tag: string;
   title: string;
-  category: string;
+  category_id: number;
 }

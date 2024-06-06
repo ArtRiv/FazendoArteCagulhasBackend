@@ -1,6 +1,5 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
 import { Product } from '@prisma/client';
-import { ProductCategoriesTypes } from 'src/types/product_category';
 import { SortByTypes } from 'src/types/product_sort_by';
 import { CollectionService } from './collection.service';
 
@@ -8,18 +7,35 @@ import { CollectionService } from './collection.service';
 export class CollectionController {
   constructor(private readonly collectionService: CollectionService) {}
 
-  @Get('/:category')
+  // @Get()
+  // async getAllProducts() {
+  //   const products = await this.collectionService.getAllProducts();
+  //   return products;
+  // }
+
+  @Get()
   async getFilteredProducts(
-    @Param('category') category: ProductCategoriesTypes,
+    @Query('category_id') category_id: number,
     @Query('page') page: number = 1,
     @Query('sort_by') sort_by: SortByTypes = 'BEST_SELLING' as SortByTypes,
   ): Promise<Product[]> {
     const products = await this.collectionService.getFilteredProducts({
       page,
-      category,
+      category_id,
       sort_by,
     });
 
     return products;
+  }
+
+  @Delete()
+  async deleteProducts() {
+    await this.collectionService.deleteProducts();
+    return 'teste';
+  }
+
+  @Post()
+  async createProducts(@Body() Products: Product[]): Promise<Product[]> {
+    return this.collectionService.createProducts(Products);
   }
 }
