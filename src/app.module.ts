@@ -4,6 +4,7 @@ import { ReviewModule } from './routes/review/review.module';
 import { ResultsModule } from './routes/results/results.module';
 import { CollectionModule } from './routes/collections/collection.module';
 import { ProductModule } from './routes/product/product.module';
+import { CategoryModule } from './routes/category/category.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ProductModule } from './routes/product/product.module';
     ProductModule,
     ReviewModule,
     ResultsModule,
+    CategoryModule,
   ],
   controllers: [],
 })
