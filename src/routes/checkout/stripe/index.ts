@@ -1,8 +1,8 @@
 import Stripe from "stripe";
 import { config } from "./config";
 import { CheckoutParams } from "src/interfaces/checkout.interface";
-import { getLineItems } from "./utils/getLineItems";
-import { getStripeCheckoutShippingOptionsFormat } from "./utils/getShippingOptions";
+import { getLineItems } from "../utils/getLineItems";
+import { getStripeCheckoutShippingOptionsFormat } from "../utils/getShippingOptions";
 import { PartialShippingOption } from "src/routes/calculate-shipping/interface/shipping_option.interface";
 
 export const stripe = new Stripe(config.stripe.secretKey, {
