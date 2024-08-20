@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ReviewService } from './review.service';
 import { Review } from '@prisma/client';
@@ -12,9 +12,19 @@ export class ReviewController {
     return this.ReviewService.createReview(Reviews);
   }
 
+  @Delete()
+  async deleteReviews() {
+    return this.ReviewService.deleteReview();
+  }
+
   @Get()
-  async getAllReview(): Promise<Review[]> {
-    return this.ReviewService.getAllReview();
+  async getAllReviews(): Promise<Review[]> {
+    return this.ReviewService.getAllReviews();
+  }
+
+  @Get('/:id')
+  async getReviewByID(@Param('id') id: string): Promise<Review[]> {
+    return this.ReviewService.getProductReviews(id);
   }
 
   // @Delete()

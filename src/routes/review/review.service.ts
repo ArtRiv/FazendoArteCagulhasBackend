@@ -19,7 +19,19 @@ export class ReviewService {
     }
   }
 
-  async getAllReview(): Promise<Review[]> {
+  async deleteReview() {
+    await this.prisma.review.deleteMany();
+  }
+
+  async getProductReviews(id: string): Promise<Review[]> {
+    return await this.prisma.review.findMany({
+      where: {
+        product_id: id,
+      },
+    });
+  }
+
+  async getAllReviews(): Promise<Review[]> {
     return await this.prisma.review.findMany();
   }
 }
