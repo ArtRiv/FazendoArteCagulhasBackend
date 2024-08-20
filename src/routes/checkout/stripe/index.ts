@@ -1,9 +1,8 @@
 import Stripe from "stripe";
 import { config } from "./config";
 import { CheckoutParams } from "src/interfaces/checkout.interface";
-import { getLineItems } from "../utils/getLineItems";
-import { getStripeCheckoutShippingOptionsFormat } from "../utils/getShippingOptions";
-import { PartialShippingOption } from "src/routes/calculate-shipping/interface/shipping_option.interface";
+import { getLineItems } from "../utils/get-line-items";
+import { getStripeCheckoutShippingOptionsFormat } from "../utils/get-shipping-options";
 
 export const stripe = new Stripe(config.stripe.secretKey, {
     apiVersion: '2024-06-20'
@@ -12,7 +11,7 @@ export const stripe = new Stripe(config.stripe.secretKey, {
 export const createCheckoutSession = async ({ items, shippingOptions, userID }: CheckoutParams) => {
     try {
         const line_items = await getLineItems({ items, stripe });
-        const shipping_options = await getStripeCheckoutShippingOptionsFormat(shippingOptions);
+        const shipping_options = getStripeCheckoutShippingOptionsFormat(shippingOptions);
 
         const session = await stripe.checkout.sessions.create({
             mode: 'payment',

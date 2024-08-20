@@ -1,5 +1,5 @@
 import { CheckoutParams, ProductCart } from "src/interfaces/checkout.interface";
-import { getPrices } from "./getPrice";
+import { getPrices } from "./get-price";
 import Stripe from "stripe";
 
 interface getLineItems {
