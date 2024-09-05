@@ -9,17 +9,93 @@ datasource db {
 }
 
 model User {
-  id    String @id @default(uuid())
-  name  String
-  email String @unique
+  id                  String              @id @default(uuid())
+  name                String
+  email               String              @unique
+  cart                Cart?
+  transaction_history TransactionHistory?
+  address             Address?
+}
+
+model Cart {
+  id     String      @id @default(uuid())
+  items  CartItems[]
+  user   User        @relation(fields: [userID], references: [id])
+  userID String      @unique
+}
+
+model CartItems {
+  id             String @id
+  Cart           Cart   @relation(fields: [cartID], references: [id], onDelete: Cascade)
+  cartID         String
+  title          String
+  image          String
+  price          Float
+  quantity       Int
+  purchase_count Int
+  rating         Int
+}
+
+model TransactionHistory {
+  id           String        @id @default(uuid())
+  transactions Transaction[]
+  user         User          @relation(fields: [userID], references: [id])
+  userID       String        @unique
+}
+
+model Transaction {
+  id                   String             @id
+  transactionHistory   TransactionHistory @relation(fields: [transactionHistoryID], references: [id])
+  transactionHistoryID String
+  price                Float
+  status               TransactionStatus
+  receipt              String
+  shipping_label       ShippingLabel?
+}
+
+enum TransactionStatus {
+  no_payment_required
+  paid
+  unpaid
+}
+
+model ShippingLabel {
+  id            String              @id
+  price         Float
+  status        ShippingLabelStatus
+  transaction   Transaction         @relation(fields: [transactionID], references: [id])
+  transactionID String              @unique
+}
+
+enum ShippingLabelStatus {
+  pending
+  released
+  posted
+  delivered
+  canceled
+}
+
+model Address {
+  id          String @id @default(uuid())
+  email       String @unique
+  user        User   @relation(fields: [userID], references: [id])
+  userID      String @unique
+  name        String
+  street      String
+  number      String
+  complement  String
+  district    String
+  city        String
+  state_abbr  String
+  postal_code String
 }
 
 model Product {
+  id             String   @id
   category       Category @relation(fields: [category_id], references: [id])
   category_id    Int
   created_at     Int
   description    String[] @default([])
-  id             String   @id
   link           String
   media          String[] @default([])
   price          Float
